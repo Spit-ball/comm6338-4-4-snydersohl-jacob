@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Guess</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/themes/prism-okaidia.min.css" integrity="sha512-mIs9kKbaw6JZFfSuo+MovjU+Ntggfoj8RwAmJbVXQ5mkAX5LlgETQEweFPI18humSPHymTb5iikEOKWF7I8ncQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+      :root {
+        --primary-color: hsl(270, 54%, 15%);
+        --text: #eee;
+        --button-bg: rebeccapurple;
+        --button-border: hsl(270, 54%, 50%);
+      }
+      body {
+        max-width: 800px;
+        margin: auto;
+        background-color: var(--primary-color);
+        color: var(--text);
+        font-size: 1.2rem;
+        line-height: 1.5;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      h1, h2, h3 {
+        text-align: center;
+        margin: 48px 0;
+        letter-spacing: 1.5px;
+      }
+      .game, .game-example {
+        text-align: center;
+      }
+      .score, .score-example {
+        display: flex;
+        justify-content: space-around;
+      }
+      p {
+        margin: 48px 0;
+      }
+      a {
+        color: hsl(15, 72%, 75%);
+      }
+      a:visited {
+        color: hsl(15, 72%, 70%);
+      }
+      span.mono {
+        font-family: 'Courier New', Courier, monospace;
+      }
+      .game-example {
+        border: 2px solid #eee;
+        position: relative;
+        border-radius: 0 6px 6px 6px;
+        padding: 24px 0;
+        margin: 96px 0;
+      }
+      .game-example > .tag {
+        position: absolute;
+        left: -2px;
+        top: -30px;
+        color:hsl(270, 54%, 15%);
+        background-color: #eee;
+        padding: 0 24px;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+      }
+    </style>
+</head>
+
+<body>
+  <h1>Word Guess!</h1>
+  <div class="game">
+    <h2 id="word-to-guess"></h2>
+    <div>Previous word: <span id="previous-word"></span></div>
+    <div>Incorrect Letters: <span id="incorrect-letters"></span></div>
+    <div>Remaining Guesses: <span id="remaining-guesses"></span></div>
+    <div class="score">
+      <span>Wins: <span id="wins">0</span></span>
+      <span>Losses: <span id="losses">0</span></span>
+    </div>
+  </div>
+  <h2>Instructions</h2>
+  <p>For this assignment, you will need to create a word guess game using the provided HTML at the top of this page. All of your code should be written in the included <span class="mono">index.js</span> file.</p>
+  <h3>Setup</h3>
+  <p>The markup for the game HTML is as follows:</p>
+  <pre><code class="language-markup" id="markup-example">&lt;div class="game">
+  &lt;h2 id="word-to-guess">&lt;/h2>
+  &lt;div>Previous word: &lt;span id="previous-word">&lt;/span>&lt;/div>
+  &lt;div>Incorrect Letters: &lt;span id="incorrect-letters">&lt;/span>&lt;/div>
+  &lt;div>Remaining Guesses: &lt;span id="remaining-guesses">&lt;/span>&lt;/div>
+  &lt;div class="score">
+    &lt;span>Wins: &lt;span id="wins">0&lt;/span>&lt;/span>
+    &lt;span>Losses: &lt;span id="losses">0&lt;/span>&lt;/span>
+  &lt;/div>
+&lt;/div></code></pre>
+  <p><u>Do NOT modify this <span class="mono">index.html</span> file.</u> The included automated tests depend on this markup to run. All markup needed to complete this assignment is already included. There is also no need to write any CSS to complete this assignment; all required CSS for the assignment is already included.</p>
+  <p>The <span class="mono">index.js</span> file also includes a variable named <span class="mono">words</span> that is assigned an array of words to be used in the game:</p>
+  <pre><code class="language-js" id="words-example">var words = [
+  'bananas',
+  'grapes',
+  'carousel',
+  'milkshake',
+  'javascript',
+  'limousine',
+  'chocolate',
+  'programming',
+  'meatloaf',
+  'ukulele',
+  'mango'
+]</code></pre>
+  <p><u>Do NOT modify this code</u> while completing your assignment. The included automated tests rely on these words in this order to check the functionality of your code.</p>
+
+  <h3 id="game-behavior">Game Behavior</h3>
+  <p>When the page loads, your code should select a word at random from the provided <a href="#words-example"><span class="mono">words</span></a> array and place it in the <a href="#markup-example"><span class="mono">#word-to-guess</span></a> element with its letters replaced with underscores. The game should also display ten remaining guesses in the <a href="#markup-example"><span class="mono">#remaining-guesses</span></a> element. See <a href="#fig-1">figure 1</a> below for an example using the word "mango":</p>
+  <div class="game-example">
+    <span class="tag" id="fig-1">Figure 1: Starting Game State</span>
+    <h2>_____</h2>
+    <div>Previous word:</div>
+    <div>Incorrect Letters:</div>
+    <div>Remaining Guesses: 10</div>
+    <div class="score-example">
+      <span>Wins: 0</span>
+      <span>Losses: 0</span>
+    </div>
+  </div>
+  <p>When the user presses a letter key, your code should check whether the letter is included in the word. If the letter is included, it should replace the underscores in the displayed word (displayed in the <a href="#markup-example"><span class="mono">#word-to-guess</span></a> element) with the instances of that letter. If the letter is not included, the <a href="#markup-example"><span class="mono">#word-to-guess</span></a> element should remain unchanged, but the incorrectly-guessed letter should be added to the <a href="#markup-example"><span class="mono">#incorrect-letters</span></a> element and the <a href="#markup-example"><span class="mono">#remaining-guesses</span></a> element should reflect one fewer remaining guess.</p>
+  <p>Assuming "mango" as the chosen word, see <a href="#fig-2">Figure 2</a> for the game state after the user has pressed the 'a' key, and <a href="#fig-3">Figure 3</a> for an incorrect guess after the user has pressed the 'k' key.</p>
+  <div class="game-example">
+    <span class="tag" id="fig-2">Figure 2: Correct Guess</span>
+    <h2>_a___</h2>
+    <div>Previous word:</div>
+    <div>Incorrect Letters:</div>
+    <div>Remaining Guesses: 10</div>
+    <div class="score-example">
+      <span>Wins: 0</span>
+      <span>Losses: 0</span>
+    </div>
+  </div>
+  <div class="game-example">
+    <span class="tag" id="fig-3">Figure 3: Incorrect Guess</span>
+    <h2>_____</h2>
+    <div>Previous word:</div>
+    <div>Incorrect Letters: k</div>
+    <div>Remaining Guesses: 9</div>
+    <div class="score-example">
+      <span>Wins: 0</span>
+      <span>Losses: 0</span>
+    </div>
+  </div>
+  <p>Note that if the user presses a non-letter key or the 'k' key repeatedly, there should be <u>NO changes</u> to the game state shown in <a href="#fig-3">figure 3</a>.</p>
+  <p>See <a href="#fig-4">figure 4</a> below for an example of the game state where the user has pressed keys 'a', 'm', 'g', 'o', 'k', 'q', and 'z'. In this state, the game will be won if the user presses the 'n' key.</p>
+  <div class="game-example">
+    <span class="tag" id="fig-4">Figure 4</span>
+    <h2>ma_go</h2>
+    <div>Previous word:</div>
+    <div>Incorrect Letters: k, q, z</div>
+    <div>Remaining Guesses: 7</div>
+    <div class="score-example">
+      <span>Wins: 0</span>
+      <span>Losses: 0</span>
+    </div>
+  </div>
+  <p>When the user presses 'n' in <a href="#fig-4">figure 4</a> above, the game should count a win and display '1' in the <a href="#markup-example"><span class="mono">#wins</span></a> element. The game should immediately proceed to the next randomly-chosen word and reset all of the other elements: incorrect letters should be blank, remaining guesses should show '10', and the <a href="#markup-example"><span class="mono">#previous-word</span></a> element should read "mango". See <a href="#fig-5">figure 5</a> below for an example.</p>
+  <div class="game-example">
+    <span class="tag" id="fig-5">Figure 5: After a Win</span>
+    <h2>______</h2>
+    <div>Previous word: mango</div>
+    <div>Incorrect Letters:</div>
+    <div>Remaining Guesses: 10</div>
+    <div class="score-example">
+      <span>Wins: 1</span>
+      <span>Losses: 0</span>
+    </div>
+  </div>
+  <p>Similarly, if the user had run out of remaining guesses before guessing the word, the game would also proceed to the next game and show an increase in losses instead of wins. See <a href="#fig-6">figure 6</a> below.</p>
+  <div class="game-example">
+    <span class="tag" id="fig-6">Figure 6: After a Loss</span>
+    <h2>______</h2>
+    <div>Previous word: mango</div>
+    <div>Incorrect Letters:</div>
+    <div>Remaining Guesses: 10</div>
+    <div class="score-example">
+      <span>Wins: 0</span>
+      <span>Losses: 1</span>
+    </div>
+  </div>
+  <h2>Tests</h2>
+  <p>Automated tests are included with this assignment. Click the "run tests" button in the bottom right of the screen to run the test suite. To close the tests, click "close tests". To receive full credit, all automated tests must pass.</p>
+  <h2>Requirements for full credit</h2>
+  <p>
+    To receive full credit for this assignment, your program MUST:
+    <ul>
+      <li>Operate in the same manner as described above in the <a href="#game-behavior">Game Behavior</a> section.</li>
+      <li>Pass all automated tests.</li>
+      <li>Be deployed to GitHub Pages.</li>
+    </ul>
+  </p>
+  <h2>Submission</h2>
+  <p>
+    When submitting this assignment, please include <u>BOTH</u>:
+    <ol>
+      <li>A link to the assignment's GitHub repository.</li>
+      <li>A link to the assignment's deployed, live site on GitHub Pages.</li>
+    </ol>
+  </p>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/prism.min.js"
+    integrity="sha512-/Swpp6aCQ0smuZ+zpklJqMClcUlvxhpLf9aAcM7JjJrj2waCU4dikm3biOtMVAflOOeniW9qzaNXNrbOAOWFCw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sinon.js/10.0.1/sinon.min.js"></script>
+  <script>
+    if (localStorage.getItem('test-run') === 'true') {
+      sinon.stub(Math, 'random').returns(0)
+    }
+  </script>
+  <script src="index.js"></script>
+  <script src="tests.js"></script>
+</body>
+
+</html>
