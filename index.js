@@ -35,7 +35,9 @@ document.onkeyup = function (event) {
   if (wordToGuess.includes(userLetter)) { // if the wordToGuess includes the pressed key...
     for (let i = 0; i < wordToGuess.length; i++) { // iterate through the entire length of the word
       if (wordToGuess[i] === userLetter) { // if the current index of the wordToGuess is equal to the pressed letter...
-        replacedWord = replacedWord.substr(0, i) + userLetter + replacedWord.substr(i + 1); // UNSURE HOW THIS WORKS, THIS WAS A GOOGLE SOLUTION...HELP?
+        let wordArray = replacedWord.split('');
+        wordArray[i] = userLetter;
+        replacedWord = wordArray.join('');
       }
     }
     document.getElementById('word-to-guess').innerHTML = replacedWord; // send the replaced word to the DOM each time an included letter is pressed.
